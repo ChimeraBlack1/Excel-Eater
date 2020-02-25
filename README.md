@@ -8,6 +8,6 @@ How to use:
 -Input the "Child" Workbook
 -Input the index column letter that will be compared to master
 -Set the number of values you wish to extract from the child
--Input the column letter for each value you're extracting
+-Input the column letter for each value you're extracting (cannot conflict)
 
 -add or discard missing
