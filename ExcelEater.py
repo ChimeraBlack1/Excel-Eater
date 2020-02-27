@@ -115,6 +115,80 @@ def GetSheet(book, prompt):
   return sheet
 
 
+def ValidateMaxRow():
+  """
+  Did the user enter a valid ENDING cell?
+  """
+  valid = False
+  while valid == False:
+    maxRow_ = GetInput("Please enter the row you want to read the excel sheet to ", "Sorry, that is not a valid row. Please try again... ")
+    if maxRow_ == "":
+      print("Fine, don't tell me...I'll just guess...")
+      maxRow_ = masterSheet.max_row +1
+      valid = True
+    try:
+      maxRow_ = int(maxRow_)
+      valid = True
+    except:
+      print("you must enter a valid number")
+      continue
+    if maxRow_ < 1:
+      print("You did not specify a valid number. The program will guess at the which row is the END")
+      maxRow_ = masterSheet.max_row +1
+      valid = True
+  return maxRow_
+
+
+
+def ValidateMasterRowStart():
+  """
+  Did the user enter a valid STARTING cell?
+  """
+  valid = False
+  while valid == False:
+    masterRowStart_ = GetInput("Which row would you like to start on?", "Sorry that's not a valid row.  Please try again ")
+    if masterRowStart_ == "":
+      print("If you're not gonna tell me, I'm just gonna search the whole thing...")
+      masterRowStart_ = 1
+      valid = True
+    try:
+      int(masterRowStart_)
+      valid = True
+    except:
+      print("you must enter a valid number")
+      continue
+    if masterRowStart_ < 1:
+      print("You did not specify a valid number. The program will guess at the which row is the START")
+      masterRowStart_ = 1
+      valid = True
+  return masterRowStart_
+
+
+def ValidateMasterCol():
+    """
+  Did the user enter a VALID INDEX COLUMN for the MASTER?
+  """
+  valid = False
+  while valid == False:
+    masterRowStart_ = GetInput("Which column are we going to use for the master index?", "Sorry that's not a valid row.  Please try again ")
+    if masterRowStart_ == "":
+      print("If you're not gonna tell me, I'm just gonna search the whole thing...")
+      masterRowStart_ = 1
+      valid = True
+    try:
+      int(masterRowStart_)
+      valid = True
+    except:
+      print("you must enter a valid number")
+      continue
+    if masterRowStart_ < 1:
+      print("You did not specify a valid number. The program will guess at the which row is the START")
+      masterRowStart_ = 1
+      valid = True
+  return masterRowStart_
+
+
+
 """
                 Home
 -------------------------------------
@@ -139,33 +213,52 @@ def GetSheet(book, prompt):
 *** TYPE EXIT TO STOP THE PROGRAM *** 
 
 """
+#master globals
+masterBook = {}
+masterSheet = {}
+masterValues = {}
+masterCol = {}
+masterRowStart_ = 1
+maxRow_ = 1
+
+#child globals
+childBook = {}
+childSheet = {}
+childDict = {}
+childCol = {}
+childRowStart_ = 1
+childMaxRow_ = 1
 
 #program loop
 run = True
 while run:
   Home()
-  selection = GetInput("Please make a selection", "I'm sorry, that's not a valid selection.  Please try again")
+  selection = str(GetInput("Please make a selection", "I'm sorry, that's not a valid selection.  Please try again"))
+  print("you entered: " + selection)
   if selection == "exit":
     exit()
-  if selection == 1:
+  if selection == "1":
     #get master sheet
     masterBook = GetBook("What is the name of the MASTER book? ")
     masterSheet = GetSheet(masterBook, "What is the name of the target sheet in the MASTER book? ")
-    maxRow_ = GetInput("Please enter the row you want to read the excel sheet to ", "Sorry, that is not a valid row. Please try again... ")
-    masterRowStart_ = GetInput("Which row would you like to start on?", "Sorry that's not a valid row.  Please try again ")
-  elif selection == 2:
+    maxRow_ = ValidateMaxRow()
+    masterRowStart_ = ValidateMasterRowStart()
+    masterCol = ValidateMasterCol()
+
+    masterValues = GetValues(masterSheet, masterCol, masterRowStart_, maxRow_)
+  elif selection == "2":
     #get child sheet
     childBook = GetBook("What is the name of the CHILD book? ")
     childSheet = GetSheet(childBook, "What is the name of the target sheet in the CHILD book? ")
-  elif selection == 3:
+  elif selection == "3":
     #consume child sheet
       # column(s) to match against master (index column)
       # column(s) (values) to copy/paste into master
-      pass
-  elif selection == 4:
+    pass
+  elif selection == "4":
     # print master values
-     pass
-  elif selection == 5:
+    print(masterValues)
+  elif selection == "5":
     # print child values
       #select child
     pass
