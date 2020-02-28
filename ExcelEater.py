@@ -36,7 +36,6 @@ def Home():
   print("-------------------------------------")
   print("*** TYPE EXIT TO STOP THE PROGRAM ***")
 
-
 def FindLastRow(sheet, row=0, col=0):
   """
   Find the number of populated rows in a given column of an excel worksheet
@@ -60,17 +59,16 @@ def GetValues(sheet, whichCol, index, start, end):
   create object of objects that contain the value to update as the key, and the values and xl cell as the details
   ie: {123456: {xlRow:144, xlCol:5,color: "blue", type:"sale", angle:90}, 890128:{xlRow:145, xlCol:5, color: "red", type:"return", angle:180}}
   """
-
+  print("this is whichCol: " + str(whichCol))
   destDict = {}
+  valueDict = {}
 
   for i in range(start, end):
     indexVal = sheet.cell(i,index).value
     for j in whichCol:
-      print(j)
+      valueDict[whichCol[j]] = sheet.cell(i,j).value    
 
-    destDict[indexVal] = {
-      
-    }
+    destDict[indexVal] = valueDict
     #TODO change val to be the key rather than i
 
   return destDict
@@ -182,7 +180,7 @@ def ValidateCol():
   while valid == False:
     colStart_ = GetInput("Which column are we going to use for the index?", "Sorry that's not a valid row.  Please try again ")
     if colStart_ == "":
-      print("Searching entire document...")
+      print("Using Column 1...")
       colStart_ = 1
       valid = True
     try:
@@ -226,6 +224,12 @@ def UploadSuccessful(sheet):
     print("**************************************")
     print("*Child document uploaded successfully*")
     print("**************************************")
+
+def PrintValues():
+  """
+  Print the values in a more readable way
+  """
+  pass
   
 
 #master globals
@@ -250,7 +254,7 @@ while run:
   Home()
   selection = str(GetInput("Please make a selection", "I'm sorry, that's not a valid selection.  Please try again"))
   print("you entered: " + selection)
-  if selection == "exit":
+  if selection.lower() == "exit":
     exit()
   if selection == "1":
     #get master sheet
@@ -261,8 +265,13 @@ while run:
     masterColIndex = ValidateCol()
     colCount = GetInput("how many columns are we taking values from?","Sorry that's not a valid number.  Try again.")
     # colCount = int(colCount)
-    whichCol = GetColumns(int(colCount))
-    print(whichCol)
+    try:
+      colCount = int(colCount)
+    except:
+      print("please enter a valid number")
+      continue
+
+    whichCol = GetColumns(colCount)
 
     masterValues = GetValues(masterSheet, whichCol, masterColIndex, masterRowStart_, maxRow_)
     UploadSuccessful(sheet="master")
