@@ -59,18 +59,16 @@ def GetValues(sheet, whichCol, index, start, end):
   create object of objects that contain the value to update as the key, and the values and xl cell as the details
   ie: {123456: {xlRow:144, xlCol:5,color: "blue", type:"sale", angle:90}, 890128:{xlRow:145, xlCol:5, color: "red", type:"return", angle:180}}
   """
-  print("this is whichCol: " + str(whichCol))
+  # print("this is whichCol: " + str(whichCol))
   destDict = {}
-  valueDict = {}
 
   for i in range(start, end):
     indexVal = sheet.cell(i,index).value
+    valueDict = {}
     for j in whichCol:
-      valueDict[whichCol[j]] = sheet.cell(i,j).value    
-
+      valueDict[whichCol[j]] = sheet.cell(i,j).value
+    
     destDict[indexVal] = valueDict
-    #TODO change val to be the key rather than i
-
   return destDict
 
 
@@ -160,7 +158,7 @@ def ValidateRowStart():
       rowStart_ = 1
       valid = True
     try:
-      int(rowStart_)
+      rowStart_ = int(rowStart_)
       valid = True
     except:
       print("you must enter a valid number")
@@ -333,28 +331,28 @@ while run:
 #ignore overwrite values in master from child?
 
 
-def update_xlsx(wb, wb2, ws, ws2):
-  #get the last excel entry in first sheet
-  destEnd = ws.max_row +1
+# def update_xlsx(wb, wb2, ws, ws2):
+#   #get the last excel entry in first sheet
+#   destEnd = ws.max_row +1
   
-  #get the last exccel entry in the second sheet
-  srcEnd = ws2.max_row +1
+#   #get the last exccel entry in the second sheet
+#   srcEnd = ws2.max_row +1
 
-  srcDict = {}
+#   srcDict = {}
 
-  # create object of objects that contain the value to update as the key, and the values and xl cell as the details
-  # ie: {123456: {xlRow:144, xlCol:5,color: "blue", type:"sale", angle:90}, 890128:{xlRow:145, xlCol:5, color: "red", type:"return", angle:180}}
+#   # create object of objects that contain the value to update as the key, and the values and xl cell as the details
+#   # ie: {123456: {xlRow:144, xlCol:5,color: "blue", type:"sale", angle:90}, 890128:{xlRow:145, xlCol:5, color: "red", type:"return", angle:180}}
 
-  for i in range(1, destEnd):
-    val = ws.cell(i,1).value
-    destDict[i] = val
+#   for i in range(1, destEnd):
+#     val = ws.cell(i,1).value
+#     destDict[i] = val
 
-  for i in range(1, srcEnd):
-    val = ws2.cell(i,1).value
-    if val not in destDict:
-      ws.cell(i,1).value = val
+#   for i in range(1, srcEnd):
+#     val = ws2.cell(i,1).value
+#     if val not in destDict:
+#       ws.cell(i,1).value = val
   
-  wb.save(filename=dest)
-  print("saved updated workbook")
+#   wb.save(filename=dest)
+#   print("saved updated workbook")
 
 # update_xlsx(wb, wb2, ws, ws2)
