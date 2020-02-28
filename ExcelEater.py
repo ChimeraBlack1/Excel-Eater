@@ -18,8 +18,8 @@ def Home():
         - save updated master sheet
   4) Print Master values
   5) Print Child values
-  6) Print values in Child not in Master
-  7) Print values in Master not in Child
+  6) Print values in Child missing from Master
+  7) Print values in Master missing from Child
   8) Print values consumed by Master (and from which child)
 
   *** TYPE EXIT TO STOP THE PROGRAM *** 
