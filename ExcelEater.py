@@ -223,14 +223,38 @@ def UploadSuccessful(sheet):
     print("*Child document uploaded successfully*")
     print("**************************************")
 
-def PrintValues(values):
+def PrintValues(values, msg="sheet hasn't been uploaded yet"):
   """
   Print the values in a more readable way
   """
-  for v in values:
-    print(str(v) + " - " + str(values[v]))
-  
+  try:
+    for v in values:
+      print(str(v) + " - " + str(values[v]))
+  except:
+    print(msg)
+  print("there are " + str(len(values)) + " values uploaded from this sheet")
 
+
+def CheckColCount(masterColCount, childColCount):
+  """
+  Count the columns of Master, Count the columns of Child, compare the two, return which situation to address.
+  """
+  if masterColCount == childColCount:
+    # columns are equal  Please map the columns:
+      # for each column in child, assign a column in master that will receive the value
+    return 1
+  if masterColCount < childColCount:
+    # master has too few columns.  Please merge child columns to fit.
+      # please choose the first child column to merge
+      # which column should it be merged with?
+      # if mastercolCount == childColCount:
+        #Assignment()
+      # else:
+        # 
+    return 2
+  if masterColCount > childColCount:
+    return 3
+  
 #master globals
 masterBook = {}
 masterSheet = {}
@@ -238,6 +262,7 @@ masterValues = {}
 masterCol = {}
 masterRowStart_ = 1
 maxRow_ = 1
+masterColCount = 0
 
 #child globals
 childBook = {}
@@ -246,6 +271,9 @@ childDict = {}
 childCol = {}
 childRowStart_ = 1
 childMaxRow_ = 1
+childColCount = 0
+foundCount = 0
+missingCount = 0
 
 #program loop
 run = True
@@ -262,15 +290,15 @@ while run:
     maxRow_ = ValidateMaxRow(masterSheet)
     masterRowStart_ = ValidateRowStart()
     masterColIndex = ValidateCol()
-    colCount = GetInput("how many columns are we taking values from?","Sorry that's not a valid number.  Try again.")
+    masterColCount = GetInput("how many columns are we taking values from?","Sorry that's not a valid number.  Try again.")
     
     try:
-      colCount = int(colCount)
+      masterColCount = int(masterColCount)
     except:
       print("please enter a valid number")
       continue
 
-    whichCol = GetColumns(colCount)
+    whichCol = GetColumns(masterColCount)
 
     masterValues = GetValues(masterSheet, whichCol, masterColIndex, masterRowStart_, maxRow_)
     UploadSuccessful(sheet="master")
@@ -294,45 +322,40 @@ while run:
     childValues = GetValues(childSheet_, childWhichCol, childColIndex, childRowStart_, childMaxRow_)
     UploadSuccessful(sheet="child")
   elif selection == "3":
-    #consume child sheet
-      # column(s) to match against master (index column)
+    # consume child sheet
+      # compare how many columns the master has to the child
+    totalColCount = CheckColCount(masterColCount, childColCount)
+    #columns match
+    if totalColCount == 1:
+      for v in childValues:
+        if v in masterValues:
+          foundCount += 1
+          print(str(v) + " matched")
+        else:
+          missingCount += 1
+          print(str(v) + " is not in child")
+      print(str(len(childValues)) + " total values in child")
+      print(str(foundCount) + " matched")
+      print(str(missingCount) + " unmatched in child")
+    # column(s) to match against master (index column)
       # column(s) (values) to copy/paste into master
-    pass
   elif selection == "4":
-    # print master values
-    try:
-      #print(masterValues)
-      PrintValues(masterValues)
-    except:
-      print("no Master sheet has been uploaded yet")
+    PrintValues(masterValues)
   elif selection == "5":
-    # print child values
-    try:
-      #print(childValues)
-      PrintValues(childValues)
-    except:
-      print("no Child sheet has been uploaded yet...")
-      #select child
-    pass
+    PrintValues(childValues)
 
-# masterValues = GetValues(masterSheet, )
 
-# 1) - Get the last row in the worksheet
-# 2) - Get the last row in a given column 
-# 3) - Provide the last row manually
+# get 4 col from master
+# get 4 col from child
+# assign which master col absorbs which child col
+# if childColCount == masterColCount:
+# 	straightAssignment()
+# if childColCount < masterColCount:
+# 	straightAssignment()
+# if childColCount > masterColCount:
+# 	select rows to merge
+# 	assignment()
 
-#MASTER
-#what's the file type? xls, xlsx, xlsm?
-#how many columns are we comparing to the child documents?
-  #what letters are they?
-#which row to start in on the master
-  #go right to end?
-  #specify end?
-
-#CHILD
-#how many col are we searching through in the child
-  #what letters are they
-#which col do the target values live in, in the child?
 
 #CONSUME
 # how many values be combined in the child?
@@ -341,30 +364,6 @@ while run:
 
 #OPTIONS
 #ignore overwrite values in master from child?
-
-
-# def update_xlsx(wb, wb2, ws, ws2):
-#   #get the last excel entry in first sheet
-#   destEnd = ws.max_row +1
-  
-#   #get the last exccel entry in the second sheet
-#   srcEnd = ws2.max_row +1
-
-#   srcDict = {}
-
-#   # create object of objects that contain the value to update as the key, and the values and xl cell as the details
-#   # ie: {123456: {xlRow:144, xlCol:5,color: "blue", type:"sale", angle:90}, 890128:{xlRow:145, xlCol:5, color: "red", type:"return", angle:180}}
-
-#   for i in range(1, destEnd):
-#     val = ws.cell(i,1).value
-#     destDict[i] = val
-
-#   for i in range(1, srcEnd):
-#     val = ws2.cell(i,1).value
-#     if val not in destDict:
-#       ws.cell(i,1).value = val
   
 #   wb.save(filename=dest)
 #   print("saved updated workbook")
-
-# update_xlsx(wb, wb2, ws, ws2)
