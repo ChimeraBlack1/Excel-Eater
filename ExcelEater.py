@@ -223,11 +223,12 @@ def UploadSuccessful(sheet):
     print("*Child document uploaded successfully*")
     print("**************************************")
 
-def PrintValues():
+def PrintValues(values):
   """
   Print the values in a more readable way
   """
-  pass
+  for v in values:
+    print(str(v) + " - " + str(values[v]))
   
 
 #master globals
@@ -262,7 +263,7 @@ while run:
     masterRowStart_ = ValidateRowStart()
     masterColIndex = ValidateCol()
     colCount = GetInput("how many columns are we taking values from?","Sorry that's not a valid number.  Try again.")
-    # colCount = int(colCount)
+    
     try:
       colCount = int(colCount)
     except:
@@ -277,11 +278,20 @@ while run:
     #get child sheet
     childBook_ = GetBook("What is the name of the CHILD book? ")
     childSheet_ = GetSheet(childBook_, "What is the name of the target sheet in the CHILD book? ")
-    maxRow_ = ValidateMaxRow(childSheet_)
+    childMaxRow_ = ValidateMaxRow(childSheet_)
     childRowStart_ = ValidateRowStart()
-    childCol_ = ValidateCol()
+    childColIndex = ValidateCol()
+    childColCount = GetInput("How many columns are we taking values from?", "Sorry that's not a valid number. Try again.")
 
-    childValues = GetValues(childSheet_, childCol_, childRowStart_, maxRow_)
+    try:
+      childColCount = int(childColCount)
+    except:
+      print("please enter a valid number")
+      continue
+
+    childWhichCol = GetColumns(childColCount)
+
+    childValues = GetValues(childSheet_, childWhichCol, childColIndex, childRowStart_, childMaxRow_)
     UploadSuccessful(sheet="child")
   elif selection == "3":
     #consume child sheet
@@ -291,13 +301,15 @@ while run:
   elif selection == "4":
     # print master values
     try:
-      print(masterValues)
+      #print(masterValues)
+      PrintValues(masterValues)
     except:
       print("no Master sheet has been uploaded yet")
   elif selection == "5":
     # print child values
     try:
-      print(childValues)
+      #print(childValues)
+      PrintValues(childValues)
     except:
       print("no Child sheet has been uploaded yet...")
       #select child
