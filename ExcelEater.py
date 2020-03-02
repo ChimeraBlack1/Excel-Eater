@@ -49,7 +49,6 @@ def FindLastRow(sheet, row=0, col=0):
     except:
       break
     rowCount = rowCount + 1
-    
   return rowCount
 
 
@@ -333,7 +332,7 @@ while run:
           print(str(v) + " matched")
         else:
           missingCount += 1
-          print(str(v) + " is not in child")
+          print(str(v) + " is not in master")
       print(str(len(childValues)) + " total values in child")
       print(str(foundCount) + " matched")
       print(str(missingCount) + " unmatched in child")
