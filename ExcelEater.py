@@ -61,13 +61,13 @@ def GetValues(sheet, whichCol, index, start, end):
   create object of objects that contain the value to update as the key, and the values and xl cell as the details
   ie: {123456: {xlRow:144, xlCol:5,color: "blue", type:"sale", angle:90}, 890128:{xlRow:145, xlCol:5, color: "red", type:"return", angle:180}}
   """
-  # print("this is whichCol: " + str(whichCol))
   destDict = {}
 
   for i in range(start, end):
     indexVal = sheet.cell(i,index).value
     valueDict = {}
     for j in whichCol:
+      valueDict["_row_"] = i
       valueDict[whichCol[j]] = sheet.cell(i,j).value
     
     destDict[indexVal] = valueDict
@@ -77,7 +77,7 @@ def GetValues(sheet, whichCol, index, start, end):
 def ConsumeChild():
   pass
 
-def GetInput(message, err):
+def GetInput(message, err="not a valid response"):
   """
   Get Input in a while loop
   """  
@@ -242,6 +242,7 @@ def CheckColCount(masterColCount, childColCount):
   Count the columns of Master, Count the columns of Child, compare the two, return which situation to address.
   """
   if masterColCount == childColCount:
+    # straightAssignment()
     # columns are equal  Please map the columns:
       # for each column in child, assign a column in master that will receive the value
     return 1
@@ -255,6 +256,9 @@ def CheckColCount(masterColCount, childColCount):
         # 
     return 2
   if masterColCount > childColCount:
+    # straightAssignment()
+    # more columns in master than child  Please map the columns:
+      # for each column in child, assign a column in master that will receive the value
     return 3
   
 #master globals
@@ -325,22 +329,42 @@ while run:
     UploadSuccessful(sheet="child")
   elif selection == "3":
     # consume child sheet
-      # compare how many columns the master has to the child
+    """
+    TODO: overwrite values?
+    overWrite = GetInput("overwrite values?")
+    if overwrite == True:
+      #overwrite values logic
+    else:
+      #only fill blanks in master logic
+    """
+
+    optionSelected = False
+    while optionSelected == False:
+      overWrite = GetInput("PLEASE SELECT: 1) Overwrite matching index values in Master  2) Only fill blanks in Master ")
+      if overWrite == "1":
+        optionSelected = True
+        pass
+      elif overWrite == "2":
+        optionSelected = True
+        pass
+      else:
+        print("Please select option 1 or two...")
+    
     totalColCount = CheckColCount(masterColCount, childColCount)
-    #columns match
     if totalColCount == 1:
       for v in childValues:
         if v in masterValues:
           foundCount += 1
           print(str(v) + " matched")
+          print(str(masterValues[v]) + " are the master values")
+          print(str(childValues[v]) + " are the child values")
         else:
           missingCount += 1
           print(str(v) + " is not in master")
+      
       print(str(len(childValues)) + " total values in child")
       print(str(foundCount) + " matched")
       print(str(missingCount) + " unmatched in child")
-    # column(s) to match against master (index column)
-      # column(s) (values) to copy/paste into master
   elif selection == "4":
     PrintValues(masterValues)
   elif selection == "5":
