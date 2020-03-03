@@ -21,6 +21,9 @@ def Home():
   6) Print values in Child missing from Master
   7) Print values in Master missing from Child
   8) Print values consumed by Master (and from which child)
+  9) Add unmatched index values in child to master as new entries
+        - which columns should we take values from in the child?
+          - which columns do they match in the master?
 
   *** TYPE EXIT TO STOP THE PROGRAM *** 
 
