@@ -39,21 +39,6 @@ def Home():
   print("-------------------------------------")
   print("*** TYPE EXIT TO STOP THE PROGRAM ***")
 
-def FindLastRow(sheet, row=0, col=0):
-  """
-  Find the number of populated rows in a given column of an excel worksheet
-  """  
-  content = sheet.cell(row, col).value
-  rowCount = 0
-
-  while content != "":
-    try:
-      content = sheet.cell_value(row + rowCount, col)
-    except:
-      break
-    rowCount = rowCount + 1
-  return rowCount
-
 
 def GetValues(sheet, whichCol, index, start, end):
   """
@@ -68,7 +53,7 @@ def GetValues(sheet, whichCol, index, start, end):
     valueDict = {}
     for j in whichCol:
       valueDict["_row_"] = i
-      valueDict[whichCol[j]] = sheet.cell(i,j).value
+      valueDict[j] = sheet.cell(i,j).value
     
     destDict[indexVal] = valueDict
   return destDict
@@ -278,7 +263,6 @@ childCol = {}
 childRowStart_ = 1
 childMaxRow_ = 1
 childColCount = 0
-foundCount = 0
 missingCount = 0
 
 #program loop
@@ -337,27 +321,57 @@ while run:
     else:
       #only fill blanks in master logic
     """
+    assignment = {}   
+
+    for v in childWhichCol:
+      absorbed = False
+      while absorbed == False:
+        print(whichCol)
+        masterColAbsorb = GetInput("which master column will absorb '" + str(childWhichCol[v]) + "'")
+        if masterColAbsorb.lower() == "exit":
+          exit()
+        try:
+          masterColAbsorb = int(masterColAbsorb)
+        except:
+          print("please enter a valid number...")
+        if masterColAbsorb in whichCol:
+          absorbed = True
+          assignment[v] = masterColAbsorb
+          print("this is the assignment object " + str(assignment))
+          # masterValues[masterColAbsorb] =
+        else:
+          print("That column doesn't exist in the master.  Try again...")
+
 
     optionSelected = False
     while optionSelected == False:
-      overWrite = GetInput("PLEASE SELECT: 1) Overwrite matching index values in Master  2) Only fill blanks in Master ")
+      overWrite = GetInput("PLEASE SELECT: (1) Overwrite values in Master  (2) Only fill blanks in Master ")
       if overWrite == "1":
         optionSelected = True
-        pass
       elif overWrite == "2":
         optionSelected = True
-        pass
       else:
         print("Please select option 1 or two...")
     
     totalColCount = CheckColCount(masterColCount, childColCount)
     if totalColCount == 1:
+      foundCount = 0
       for v in childValues:
         if v in masterValues:
           foundCount += 1
-          print(str(v) + " matched")
-          print(str(masterValues[v]) + " are the master values")
-          print(str(childValues[v]) + " are the child values")
+          for e in masterValues[v]:
+            if e != "_row_":
+              print(str(e) + " are the masterValue Keys")
+              print(str(masterValues[v][e]) + " are the masterValue values")
+              print(str(childValues[v][e]) + " are the child Values")
+          # print(str(masterValues[v]) + " are the master values")
+          # print(str(childValues[v]) + " are the child values")
+          # for i in masterValues[v]:
+          #   if i != "_row_":
+
+          
+            # print("this is i in v: " + str(i))
+          # masterSheet.cell(masterValues['_row_'], )
         else:
           missingCount += 1
           print(str(v) + " is not in master")
