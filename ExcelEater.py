@@ -201,11 +201,11 @@ def GetColumns(colCount):
   return whichCol
 
 def UploadSuccessful(sheet):
-  if sheet == "master".lower():
+  if sheet.lower() == "master":
     print("***************************************")
     print("*Master document uploaded successfully*")
     print("***************************************")
-  if sheet == "child".lower():
+  if sheet.lower() == "child":
     print("**************************************")
     print("*Child document uploaded successfully*")
     print("**************************************")
@@ -332,7 +332,7 @@ while run:
     for v in childWhichCol:
       absorbed = False
       while absorbed == False:
-        print(whichCol)
+        # print(whichCol)
         masterColAbsorb = GetInput("which master column will absorb '" + str(childWhichCol[v]) + "'")
         if masterColAbsorb.lower() == "exit":
           exit()
@@ -342,8 +342,8 @@ while run:
           print("please enter a valid number...")
         if masterColAbsorb in whichCol:
           absorbed = True
-          assignment[v] = masterColAbsorb
-          print("this is the assignment object " + str(assignment))
+          assignment[masterColAbsorb] = v
+          # print("this is the assignment object " + str(assignment))
           # masterValues[masterColAbsorb] =
         else:
           print("That column doesn't exist in the master.  Try again...")
@@ -367,11 +367,9 @@ while run:
           foundCount += 1
           for e in masterValues[v]:
             if e != "_row_":
-              # print(str(e) + " are the masterValue Keys")
-              # print(str(masterValues[v][e]) + " are the masterValue values")
-              # print(str(childValues[v][e]) + " are the child Values")
-              masterSheet.cell(masterValues[v]['_row_'], e).value = childValues[v][e]
-              print(str(childValues[v][e]))
+              # print("this is e " + str(e))
+              masterSheet.cell(masterValues[v]['_row_'], e).value = childValues[v][assignment[e]]
+              # print(str(childValues[v][assignment[e]]))
         else:
           missingCount += 1
           print(str(v) + " is not in master")
@@ -382,8 +380,6 @@ while run:
       print(str(masterBookName) + " IS MASTER BOOK")
       masterBook.save(filename=masterBookName)
       exit()
-      # print(masterBook)
-      #masterbook.save(filename=masterBook)
   elif selection == "4":
     PrintValues(masterValues)
   elif selection == "5":
