@@ -84,13 +84,13 @@ def GetBook(prompt):
   """
   destination = False
   while destination == False:
-    master = input(prompt)
+    bookName = input(prompt)
     try:
-      Book = xl.load_workbook(filename=master)
+      Book = xl.load_workbook(filename=bookName, read_only=False, keep_vba=True)
       destination = True
     except:
       print("Sorry, I couldn't find that filename in the current directory.  Did you forget the extension? xlsx, xlsm, etc...)> ")
-  return Book
+  return Book, bookName
 
 
 def GetSheet(book, prompt):
@@ -254,6 +254,7 @@ masterCol = {}
 masterRowStart_ = 1
 maxRow_ = 1
 masterColCount = 0
+masterBookName = ""
 
 #child globals
 childBook = {}
@@ -264,6 +265,7 @@ childRowStart_ = 1
 childMaxRow_ = 1
 childColCount = 0
 missingCount = 0
+childBookName_ = ""
 
 #program loop
 run = True
@@ -275,7 +277,9 @@ while run:
     exit()
   if selection == "1":
     #get master sheet
-    masterBook = GetBook("What is the name of the MASTER book? ")
+    masterBookTuple = GetBook("What is the name of the MASTER book? ")
+    masterBook = masterBookTuple[0]
+    masterBookName = masterBookTuple[1]
     masterSheet = GetSheet(masterBook, "What is the name of the target sheet in the MASTER book? ")
     maxRow_ = ValidateMaxRow(masterSheet)
     masterRowStart_ = ValidateRowStart()
@@ -294,7 +298,9 @@ while run:
     UploadSuccessful(sheet="master")
   elif selection == "2":
     #get child sheet
-    childBook_ = GetBook("What is the name of the CHILD book? ")
+    childBookTuple = GetBook("What is the name of the CHILD book? ")
+    childBook_ = childBookTuple[0]
+    childBookName_ = childBookTuple[1]
     childSheet_ = GetSheet(childBook_, "What is the name of the target sheet in the CHILD book? ")
     childMaxRow_ = ValidateMaxRow(childSheet_)
     childRowStart_ = ValidateRowStart()
@@ -361,17 +367,11 @@ while run:
           foundCount += 1
           for e in masterValues[v]:
             if e != "_row_":
-              print(str(e) + " are the masterValue Keys")
-              print(str(masterValues[v][e]) + " are the masterValue values")
-              print(str(childValues[v][e]) + " are the child Values")
-          # print(str(masterValues[v]) + " are the master values")
-          # print(str(childValues[v]) + " are the child values")
-          # for i in masterValues[v]:
-          #   if i != "_row_":
-
-          
-            # print("this is i in v: " + str(i))
-          # masterSheet.cell(masterValues['_row_'], )
+              # print(str(e) + " are the masterValue Keys")
+              # print(str(masterValues[v][e]) + " are the masterValue values")
+              # print(str(childValues[v][e]) + " are the child Values")
+              masterSheet.cell(masterValues[v]['_row_'], e).value = childValues[v][e]
+              print(str(childValues[v][e]))
         else:
           missingCount += 1
           print(str(v) + " is not in master")
@@ -379,6 +379,11 @@ while run:
       print(str(len(childValues)) + " total values in child")
       print(str(foundCount) + " matched")
       print(str(missingCount) + " unmatched in child")
+      print(str(masterBookName) + " IS MASTER BOOK")
+      masterBook.save(filename=masterBookName)
+      exit()
+      # print(masterBook)
+      #masterbook.save(filename=masterBook)
   elif selection == "4":
     PrintValues(masterValues)
   elif selection == "5":
