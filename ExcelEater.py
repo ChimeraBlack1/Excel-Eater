@@ -379,6 +379,7 @@ while run:
       bookOpen = True
       while bookOpen:
         try:
+          masterBookName = masterBookName[:-5] + ".xlsm"
           masterBook.save(filename=masterBookName)
           bookOpen = False
         except:
