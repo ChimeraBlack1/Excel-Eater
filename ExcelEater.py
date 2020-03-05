@@ -367,9 +367,7 @@ while run:
           foundCount += 1
           for e in masterValues[v]:
             if e != "_row_":
-              # print("this is e " + str(e))
               masterSheet.cell(masterValues[v]['_row_'], e).value = childValues[v][assignment[e]]
-              # print(str(childValues[v][assignment[e]]))
         else:
           missingCount += 1
           print(str(v) + " is not in master")
@@ -378,8 +376,13 @@ while run:
       print(str(foundCount) + " matched")
       print(str(missingCount) + " unmatched in child")
       print(str(masterBookName) + " IS MASTER BOOK")
-      masterBook.save(filename=masterBookName)
-      exit()
+      bookOpen = True
+      while bookOpen:
+        try:
+          masterBook.save(filename=masterBookName)
+          bookOpen = False
+        except:
+          print("Please close the Master book before saving...")
   elif selection == "4":
     PrintValues(masterValues)
   elif selection == "5":
